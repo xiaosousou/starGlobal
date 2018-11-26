@@ -1,0 +1,31 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "like",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.2,
+  "sample": 60,
+  "speed": 0.5,
+  "wrapMode": 1,
+  "curveData": {
+    "props": {
+      "y": [
+        {
+          "frame": 0.03333333333333333,
+          "value": 0,
+          "curve": [
+            0.3093172331544425,
+            -0.5944543828264757,
+            0.5229725700655933,
+            0.019841979725700676
+          ]
+        },
+        {
+          "frame": 0.2,
+          "value": -262
+        }
+      ]
+    }
+  },
+  "events": []
+}

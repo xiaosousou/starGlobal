@@ -1,2 +1,2 @@
-# starGlobal
-更新的star
+# hello-world
+Hello world new project template.

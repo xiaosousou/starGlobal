@@ -1,0 +1,31 @@
+{
+  "ver": "2.2.0",
+  "uuid": "12c8581d-2cf0-48d8-9cac-d39feebaedd5",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "subMetas": {
+    "dead36": {
+      "ver": "1.0.3",
+      "uuid": "b3679a8a-e2e6-4fca-89e4-4d0db868b6ee",
+      "rawTextureUuid": "12c8581d-2cf0-48d8-9cac-d39feebaedd5",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 5,
+      "offsetY": 3,
+      "trimX": 48,
+      "trimY": 35,
+      "width": 408,
+      "height": 408,
+      "rawWidth": 494,
+      "rawHeight": 484,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
