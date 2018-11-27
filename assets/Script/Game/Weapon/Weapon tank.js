@@ -7,13 +7,22 @@ cc.Class({
         Fragment:cc.Prefab,
     },
     onLoad(){
+        //当前得到的碎片数量
         this.FragmentNum=0;
+        //当前的炮塔数量
         this.nowturretNum=0;
     },
-    //归位
-    changeangle:function(angle){
-        var rotateTo = cc.rotateTo(2, angle);
-        this.node.runAction(rotateTo);
+    
+    //所有炮台归位
+    changeAllangle:function(){
+        //第8個炮臺 就不再歸位了
+        if(G.turretNum>=8){
+            cc.log("第8個進入");
+            //删除自己了
+            this.node.destroy();
+            return;
+        }
+        this.node.parent.getComponent("TurretS").changeturretangle();
     },
 
     //添加炮台
@@ -25,40 +34,35 @@ cc.Class({
         item.parent=this.node.parent;
         item.children[0].getComponent(cc.Animation).play();
         item.setPosition(this.node.getPosition());
+
+        //炮台数增加
         G.turretNum++;
         //删除碎片
-        this.deletFragment();
+        this.node.children[1].removeAllChildren();
         //炮塔归位
         this.changeAllangle();
-        //item.children[0].getComponent(cc.Animation).on('finished',  ,    this);//动画播放完毕 让炮台归位
     },
-    //所有炮台归位
-    changeAllangle:function(){
-        //第8個炮臺 就不再歸位了
-        if(G.turretNum>=8){
-            cc.log("第8個進入");
-            return;
-        }
-        this.node.parent.getComponent("TurretS").changeturretangle();
-    },
-
     //添加碎片效果
     addFragment:function(angle){
-        
-
-
+        //添加碎片
         var item=cc.instantiate(this.Fragment);
         item.setPosition(cc.v2(0,0));
+        //设置角度 角度减去 当前引力圈的旋转角度
         item.rotation=angle-this.node.parent.rotation;
+        //添加到引力换的 碎片节点
         item.parent=this.node.children[1];
+
 
         //回调
         var finished = cc.callFunc(function() {
+            //如果碎片没有碎片 那么我缩小0.33倍
             if(this.FragmentNum==0){
                 item.children[0].scale=0.33;
+            //如果有一个碎片 那么我缩小0.66倍
             }else if(this.FragmentNum==1){
                 item.children[0].scale=0.66;
             }
+            //当前碎片增加
             this.FragmentNum++;
         }, this);//动作完成后增加碎片
         //创建顺序动作
@@ -68,18 +72,9 @@ cc.Class({
         
     },
 
-    //碎片组合成了 炮台 删除碎片
-    deletFragment:function(){
-        for(var i=0;i<3;i++){
-            this.node.children[1].children[i].destroy();
-        }
-    },
-    update(){
-        //第8個了 就直接刪除 自己了
-        if(G.turretNum>=8){
-            this.node.destroy();
-        }
 
+    update(){
+        //如果碎片3个了 就添加一个炮台
         if(this.FragmentNum>=3){
             this.FragmentNum=0;
             this.addTurret();

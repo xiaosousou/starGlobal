@@ -18,7 +18,9 @@ cc.Class({
             }
 
             G.shieldNum++;
+            //添加护盾
             this.shieldS.addshield();
+            //被动技能上面 增加护盾图标
             var item=cc.instantiate(this.img);
             item.parent=this.PassiveSkills;
         }

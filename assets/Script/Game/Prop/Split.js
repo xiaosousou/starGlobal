@@ -11,13 +11,10 @@ cc.Class({
     onCollisionEnter: function (other, self) {
 
         if(other.node.group=="player"){
-            //this.node.getComponent("Prop Attract").die=true;
-            // var pos1 = G.player.node.parent.convertToWorldSpaceAR(G.player.node.getPosition());
-
-            // var pos2 = this.PassiveSkills.convertToNodeSpaceAR(pos1);
+            //将图标 添加到 顶部被动技能显示
             var item=cc.instantiate(this.img);
             item.parent=this.PassiveSkills;
-            
+            //子弹分裂开启
             G.split=true;
             self.node.destroy();
         }

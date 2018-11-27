@@ -14,11 +14,7 @@ cc.Class({
             this.Boss=other;
             other.node.getComponent("Boss").Injured(1);
             this.schedule(this.BossInjured, 0.2);
-
         }
-    },
-    onCollisionStay: function (other, self) {
-        
     },
     onCollisionExit: function (other, self) {
         if(other.node.group=="boss"){

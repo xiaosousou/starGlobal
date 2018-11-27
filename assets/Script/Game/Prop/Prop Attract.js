@@ -12,7 +12,7 @@ cc.Class({
         this.Lead=cc.find("Canvas/Lead");
         this.Attract=false;
     },
-
+    //判断我和 核心的距离 如果距离 <=150 那么我就被核心吸引
     update (dt) {
         if(G.gamestart==false){
             return;
@@ -33,7 +33,5 @@ cc.Class({
             this.node.y+=xl.y * dt * 1000;
         }
         
-
-
     },
 });

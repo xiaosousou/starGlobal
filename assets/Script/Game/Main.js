@@ -4,16 +4,17 @@ window.G={
     gamestart:false,//游戲開始
     startenemy:false,//开始添加敌人
     score:0,//分數
-    wave:1,//關卡數
+    wave:0,//關卡數
 
     MaxTurret:false,//武器已经满了
 
     //保存buff 吃到什麽 就保存
     split:false,//分裂彈
-    shieldNum:0,//護盾
-    turretNum:0,//炮塔数量
 
-    FragmentSpeed:1,//碎片出现速度
+
+    shieldNum:0,//護盾数量
+    turretNum:0,//炮塔数量
+    //FragmentSpeed:1,//碎片出现速度
     //Infinite:false,//炮台是否无限
 
 }
@@ -55,12 +56,10 @@ cc.Class({
         G.startenemy=false;//是否开始添加敌人了
 
         G.score=0;//分数
-        G.wave=1;//關卡為哦
+        G.wave=0;//關卡為哦
         G.shieldNum=0;//護盾為0個
         G.turretNum=0;//炮塔数量为0
-        //----------------试验性-------------
-        //G.FragmentSpeed=1;
-        //G.Infinite=false;
+
 
 
         this.enemynode=cc.find("Canvas/enemys");//敌人节点
@@ -83,6 +82,7 @@ cc.Class({
         this.lastClick=0;//雙擊間隔計時
 
         this.touchspeed=1.25;//手指移动 和 主角移动的比值
+        this.totalEnemyNum=0;//当前关卡总共出现的敌人
         this.WaveEnemyNum=0;//当前关卡敌人生成数量
 
         //通過判斷拖動距離 控制是否開始游戲
@@ -185,11 +185,15 @@ cc.Class({
     GravitationonFinished:function(){
         this.StartUI.active=false;
         this.TurretS.getComponent("TurretS").ShowTurret();
-        G.startenemy=true;
+        this.NextWave();
+
+        //G.startenemy=true;
 
         //this.addFragment();//每一关开始 出现2-5个碎片
-        this.addGun();
+        //this.addGun();
     },
+
+
 
     //添加敌人
     addenemy:function(){
@@ -237,7 +241,7 @@ cc.Class({
     //Boss死亡 回调
     BossDie:function(){
         this.addBlood(this.PropPrefabS[1]);//掉大血
-        this.addGun();//掉武器
+        //this.addGun();//掉武器
     },
     //下一关
     NextWave:function(){
@@ -247,6 +251,8 @@ cc.Class({
 
         G.startenemy=false;//暂停游戏
         G.wave++;//关卡增加
+        this.totalEnemyNum=G.wave*10;//当前关卡应该出现的敌人数量
+
         this.WaveLabel.string=G.wave;//设置显示关卡数字
         this.bulletnode.removeAllChildren();//清除子弹节点
         this.enemynode.removeAllChildren();//清除敌人节点
@@ -284,9 +290,9 @@ cc.Class({
             this.NextWavenode.opacity=255;
             //下一关 初始化
             G.startenemy=true;
-            this.WaveEnemyNum=0;//出现敌人数
+            //this.WaveEnemyNum=0;//出现敌人数
             //this.addFragment();//每一关开始 出现2-5个碎片
-            this.addGun();
+            //this.addGun();
             if(G.wave%5==0){
                 //0是boss关
                 this.addboss();
@@ -311,10 +317,10 @@ cc.Class({
             this.timer+=dt;
             if(this.timer>=0.7){
                 this.timer=0;
-                this.WaveEnemyNum++;//敌人数量增加1
-                if(this.WaveEnemyNum>G.wave*10){
+                this.totalEnemyNum--;//当前应该出现的敌人数 减1
+
+                if(this.totalEnemyNum<=0){
                     if(this.enemynode.childrenCount==0&&this.bossnode.childrenCount==0){
-                        
                         this.NextWave();
                     }
                     return;
@@ -332,10 +338,4 @@ cc.Class({
     restartgame:function(){
         cc.director.loadScene("helloworld");
     }, 
-
-
-    // Infinite:function(){
-    //     G.FragmentSpeed=0.1;
-    //     G.Infinite=true;
-    // },
 });

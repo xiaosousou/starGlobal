@@ -25,7 +25,7 @@ cc.Class({
             var worldPos1=this.node.convertToWorldSpaceAR(this.node.children[0]);
             var xl=worldPos1.sub(worldPos0).normalize();
             this.addbullet(xl);
-            //this.addbullet(cc.v2(Math.cos(-this.node.rotation*Math.PI/180), Math.sin(-this.node.rotation*Math.PI/180)));
+
         }
     },
 });

@@ -5,8 +5,6 @@ cc.Class({
         //turret:cc.Prefab,
     },
 
-    // LIFE-CYCLE CALLBACKS:
-
     onLoad () {
 
     },
@@ -14,6 +12,7 @@ cc.Class({
     ShowTurret:function(){
         this.changeturretangle();
         for(var n in this.node.children){
+            //让每个炮台 播放出现动画
             this.node.children[n].children[0].getComponent(cc.Animation).play();
         }
     },
@@ -21,12 +20,6 @@ cc.Class({
     changeturretangle:function(){
         for(var n in this.node.children){
             this.node.children[n].getComponent("Turret_Homing").changeangle(360/this.node.childrenCount*n);
-            // if(this.node.children[n].name=="Weapon tank"){
-            //     this.node.children[n].getComponent("Weapon tank").changeangle(360/this.node.childrenCount*n);
-            // }else{
-            //     this.node.children[n].getComponent("Turret").changeangle(360/this.node.childrenCount*n);
-            // }
-            
         }
     },
     update (dt) {
@@ -34,6 +27,7 @@ cc.Class({
         if(G.gamestart==false||G.startenemy==false){
             return;
         }
+        
         if(this.node.rotation<-180){
             this.node.rotation=180;
         }

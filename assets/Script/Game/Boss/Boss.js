@@ -10,8 +10,10 @@ cc.Class({
         this.ball=cc.find("Canvas/Lead");//角色
         this.bulletnode=cc.find("Canvas/bullet");//子弹节点
         this.enemynode=cc.find("Canvas/enemys");//敌人节点
+
         this.bloodnum=50+(G.wave/5*50);//血量
         this.die=false;//是否死亡
+
 
     },
 
@@ -36,7 +38,7 @@ cc.Class({
 
         if(this.bloodnum<=0){
             G.main.BossDie();
-            this.enemynode.removeAllChildren();
+            this.enemynode.removeAllChildren();//清除敌人节点
             this.bulletnode.removeAllChildren();//清除子弹
             this.node.destroy();
         }

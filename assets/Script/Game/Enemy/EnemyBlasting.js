@@ -10,7 +10,6 @@ cc.Class({
     onLoad () {
         this.ball=cc.find("Canvas/Lead");
         this.anim=this.node.getComponent(cc.Animation);
-        // this.timer=0;
         this.die=false;
 
         //爆炸之後碰撞到了角色
@@ -26,10 +25,10 @@ cc.Class({
             this.PengzhuangPlayer=true;
             this.Boom();
         }
+
         if(other.node.group=="bullet"&&self.tag==0){    
             this.Boom();
         }
-       
         if(other.node.group=="push"&&self.tag==0){
             this.Boom();
         }
@@ -37,7 +36,7 @@ cc.Class({
             this.Boom();
         }
         if(other.node.group=="hikeEnemy"&&self.tag==0){
-            self.node.destroy();
+            this.Boom();
         }
 
 
@@ -59,13 +58,15 @@ cc.Class({
             other.node.getComponent("EnemyBlasting").Boom();
         }
     },
-    die1:function(){
-        this.node.destroy();
-    },
+    
     //爆炸
     Boom:function(){
         this.die=true;
         this.anim.play();
+    },
+
+    die1:function(){
+        this.node.destroy();
     },
 
     update (dt) {

@@ -14,14 +14,13 @@ cc.Class({
         this.Hikeenemy=cc.find("Canvas/Hikeenemy");
 
         this.anim=this.node.getComponent(cc.Animation);
-        //this.timer=0;
         this.die=false;
 
         this.hike=false;//是否被黑
         this.enemyfollownode=null;//找到的节点
         this.enemyfollow=false;//是否找到了 最近的
-        this.xl=null;
-        this.timer=0;
+        this.xl=null;//自己行走的方向向量
+        this.timer=0;//查找敌人间隔
     },
 
     onCollisionEnter: function (other, self) {
@@ -29,19 +28,21 @@ cc.Class({
             other.node.getComponent("Player").bloodNum-=5;
             other.node.getComponent("Player").Injured();
 
-            
+            //播放撞到核心的动画
             var selfpos=this.node.parent.convertToWorldSpaceAR(this.node.getPosition());
             var otherpos=other.node.convertToNodeSpaceAR(selfpos);
             this.node.parent=other.node;
             this.node.setPosition(otherpos);
-            //other.node.getComponent("Player").Injured();
+ 
             this.die=true;
             this.anim.play("Hit");
         }
 
+        
         if(other.node.group=="hikeBullet"&&self.tag==0){
             this.Hike();
         }
+
 
         if(other.node.group=="bullet"&&self.tag==0){
             self.node.destroy();
@@ -49,7 +50,7 @@ cc.Class({
         if(other.node.group=="push"&&self.tag==0){
             self.node.destroy();
         }
-        
+    
         if(other.node.group=="Lightsaber"&&self.tag==0){
             self.node.destroy();
         }
@@ -58,7 +59,7 @@ cc.Class({
         }
 
 
-        
+        //被黑之后 碰到的情况
 
         if(other.node.group=="enemy"&&self.tag==0){
             self.node.destroy();
@@ -73,36 +74,6 @@ cc.Class({
         if(other.node.group=="EnemyBlasting"&&self.tag==0){
             self.node.destroy();
         }
-    },
-    onCollisionStay: function (other, self) {
-        // if(other.node.group=="push"){
-        //     //碰撞系统会计算出碰撞组件在世界坐标系下的相关的值，并放到 world 这个属性里面
-        //     var world = self.world;
-
-        //     // 碰撞组件的 aabb 碰撞框
-        //     var aabb = world.aabb;
-
-        //     // 上一次计算的碰撞组件的 aabb 碰撞框
-        //     var preAabb = world.preAabb;
-        //     var r = world.radius;
-
-        //     var offsetX = aabb.x - preAabb.x;
-        //     var offsetY = aabb.y - preAabb.y;
-        //     if(offsetX != 0) offsetX = offsetX/Math.abs(offsetX) * 2;
-        //     if(offsetY != 0) offsetY = offsetY/Math.abs(offsetX) * 2;
-        //     var point = cc.v2(preAabb.x,preAabb.y).add(cc.v2(r - offsetX, r - offsetY));
-        //     var Nodepoint = this.node.parent.convertToNodeSpaceAR(point);
-        //     this.node.setPosition(Nodepoint);
-
-        //     // var world = self.world;
-
-        //     // var r = world.radius;
-        //     // var p = world.position;
-
-        //     // this.node.setPosition(this.node.parent.convertToNodeSpaceAR(p));
-        //     // cc.log("总共",world,"半径",r,"位置",p);
-
-        // }
     },
 
     die1:function(){
@@ -137,44 +108,13 @@ cc.Class({
                 this.timer+=dt;
                 if(this.timer>=0.1){
                     this.timer=0;
-                    var enemylength=0;//找出最近距离 离我
-                    var length=0;
-                    for(var i in this.enemynode.children){
-                        //对方向量
-                        length=this.enemynode.children[i].getPosition().sub(this.node.getPosition());
-        
-                        if(length.mag()<=1000){
-                            if(enemylength==0){
-                                enemylength=length.mag();
-                                this.enemyfollownode=this.enemynode.children[i];
-                                this.enemyfollow=true;
-                            }else if(length.mag()<enemylength){
-                                enemylength=length.mag();
-                                this.enemyfollownode=this.enemynode.children[i];
-                            }
-                        }
-                    }
-                    for(var i in this.Bossnode.children){
-                        //都计算一下距离
-                        length=this.Bossnode.children[i].getPosition().sub(this.node.getPosition());
-        
-        
-                        if(length.mag()<=1000){
-                            if(enemylength==0){
-                                enemylength=length.mag();
-                                this.enemyfollownode=this.Bossnode.children[i];
-                                this.enemyfollow=true;
-                            }else if(length.mag()<enemylength){
-                                enemylength=length.mag();
-                                this.enemyfollownode=this.Bossnode.children[i];
-                            }
-                        }
+                    var follownode=this.searchEnemy();
+                    if(follownode!=null){
+                        this.enemyfollownode=follownode;
+                        this.enemyfollow=true;
                     }
                 }
 
-                
-    
-    
             }else{
                 //如果节点消失了 就跳出 重新找
                 if(!cc.isValid(this.enemyfollownode)||this.enemyfollownode.group=="hikeEnemy"){
@@ -182,19 +122,13 @@ cc.Class({
                     this.enemyfollow=false;
                     return;
                 }else{
-
                     //更新追踪的节点向量
                     this.xl=this.enemyfollownode.getPosition().sub(this.node.getPosition()).normalize();
-                    
-
-                    //cc.log("追踪的向量",posSub,"追踪的人 ",this.enemyfollownode.getPosition());
 
                 }
                 
-
-
-
             }
+
             //角度 因爲角度一開始 減少了90度
             var angle=Math.atan2(this.xl.y, this.xl.x) / Math.PI * 180 *-1 + 90;
             this.node.rotation=angle;
@@ -202,11 +136,7 @@ cc.Class({
             this.node.x+=120*this.xl.x*dt;
 
 
-
-
-
-
-
+            //超出屏幕 删除节点
             if(Math.abs(this.node.x)>this.node.parent.width/2){
                 this.node.destroy();
             }
@@ -215,5 +145,55 @@ cc.Class({
             }
         }
         
+    },
+
+
+    //搜索飞机
+    searchEnemy:function(){
+        var followenemy=null;
+        
+        //自己向量
+        var enemylength=0;//离我最近的一个敌人的距离 通过这个距离判断下一个是否比我近
+        var length=0;//向量
+
+
+        //循环所有敌人节点
+        for(var i in this.enemynode.children){
+            //对方向量
+            length=this.enemynode.children[i].getPosition().sub(this.node.getPosition());
+            //如果距离离我小于400 && 对方向量和我向量的弧度 小于90度
+            if(length.mag()<=1000){
+                //如果这是第一个离我小于400的敌人的飞机
+                if(enemylength==0){
+                    //直接把这个飞机的距离设置为 判断飞机的距离
+                    enemylength=length.mag();
+                    //将这个飞机设置为 追踪的飞机
+                    followenemy=this.enemynode.children[i];
+                //如果这不是第一个离我小于400的飞机 并且离我比 判断飞机距离 近
+                }else if(length.mag()<enemylength){
+                    //判断飞机距离 设置为这个飞机的距离
+                    enemylength=length.mag();
+                    //设置这个飞机为追踪飞机
+                    followenemy=this.enemynode.children[i];
+                }
+            }
+        }
+        //循环boss节点
+        for(var i in this.Bossnode.children){
+            //对方向量
+            length=this.Bossnode.children[i].getPosition().sub(this.node.getPosition());
+
+            if(length.mag()<=1000){
+                if(enemylength==0){
+                    enemylength=length.mag();
+                    followenemy=this.Bossnode.children[i];
+                }else if(length.mag()<enemylength){
+                    enemylength=length.mag();
+                    followenemy=this.Bossnode.children[i];
+                }
+            }
+        }
+
+        return followenemy;
     },
 });
